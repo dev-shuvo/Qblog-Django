@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Dashboard{% endblock title %}
+
+{% block content %}
+<!-- Page Header-->
+<header
+  class="masthead"
+  style="background-image: url({% static "images/dashboard-bg.jpg" %})"
+>
+  <div class="container position-relative px-4 px-lg-5">
+    <div class="row gx-4 gx-lg-5 justify-content-center">
+      <div class="col-md-10 col-lg-8 col-xl-7">
+        <div class="site-heading">
+          <h2>User Dashboard</h2>
+          <span class="subheading">Welcome, {{request.user.first_name}} {{request.user.last_name}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- Main Content-->
+<div class="container px-4 px-lg-5">
+  <div class="row gx-4 gx-lg-5 justify-content-center">
+    <div class="col-md-10 col-lg-8 col-xl-7">
+      {% include "includes/messages.html" %}
+      <h3 class="text-center text-uppercase text-primary">Your bookmarks</h3>
+      <hr class="my-4" />
+    </div>
+    <div class="col-md-10 col-lg-8 col-xl-7">
+      <!-- Post preview-->
+      {% if bookmarks %}
+      {% for bookmark in bookmarks %}
+      <div class="post-preview">
+        <a href="{% url "post" bookmark.post.category.slug bookmark.post.slug %}">
+          <h2 class="post-title">
+            {{bookmark.post.title}}
+          </h2>
+          <h3 class="post-subtitle">
+            {{bookmark.post.post|slice:45|safe}}
+          </h3>
+        </a>
+        <p class="post-meta">
+          Posted by
+          <a href="{% url "by_author" bookmark.post.author.id %}">{{bookmark.post.author.first_name}} {{bookmark.post.author.last_name}}</a>
+          on {{bookmark.post.created_at}} in <a href="{% url 'by_category' bookmark.post.category.slug %}">{{bookmark.post.category.name}}</a> Views: {{bookmark.post.total_views}}
+        </p>
+      </div>
+      {% endfor %}
+      {% endif %}
+      <!-- Divider-->
+      <hr class="my-4" />
+      <!-- Pager-->
+      {% if posts.has_other_pages %}
+      <div class="row mb-4">
+        <div class="col">
+          {% if posts.has_previous %}
+          <a class="btn btn-primary text-uppercase" href="?page={{posts.previous_page_number}}">← Newer</a>
+          {% endif %}
+        </div>
+        <div class="col text-end">
+          {% if posts.has_next %}
+        <a class="btn btn-primary text-uppercase" href="?page={{posts.next_page_number}}">Older →</a>
+        {% endif %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock content %}

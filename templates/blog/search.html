@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{query}}{% endblock title %}
+{% block content %}
+<!-- Page Header-->
+<header
+  class="masthead"
+  style="background-image: url({% static "images/home-bg.jpg" %})"
+>
+  <div class="container position-relative px-4 px-lg-5">
+    <div class="row gx-4 gx-lg-5 justify-content-center">
+      <div class="col-md-10 col-lg-8 col-xl-7">
+        <div class="site-heading">
+          <h1>Qblog</h1>
+          <span class="subheading">A Blog for Qtec Solutions</span>
+          <form action="{% url "search" %}" method="GET">
+            <div class="input-group mt-4">
+              <input type="text" class="form-control" placeholder="Search the blog" name="q">
+              <button type="submit" class="input-group-text btn btn-primary">Search</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- Main Content-->
+<div class="container px-4 px-lg-5">
+  <div class="row gx-4 gx-lg-5 justify-content-center">
+    <div class="col-md-10 col-lg-8 col-xl-7">
+      <h5 class="text-center">Searched for: {{query}}</h5>
+      {% if corrected_query %}
+      <h6 class="text-center text-primary">Showing results for: {{corrected_query}}</h6>
+      {% endif %}
+      <hr class="my-4" />
+    </div>
+    <div class="col-md-10 col-lg-8 col-xl-7">
+      <!-- Post preview-->
+      {% if posts %}
+      {% for post in posts %}
+      <div class="post-preview">
+        <a href="{% url "post" post.category.slug post.slug %}">
+          <h2 class="post-title">
+            {{post.title}}
+          </h2>
+          <h3 class="post-subtitle">
+            {{post.post|slice:45|safe}}
+          </h3>
+        </a>
+        <p class="post-meta">
+          Posted by
+          <a href="{% url "by_author" post.author.id %}">{{post.author.first_name}} {{post.author.last_name}}</a>
+          on {{post.created_at}} in <a href="{% url 'by_category' post.category.slug %}">{{post.category.name}}</a> Views: {{post.total_views}}
+        </p>
+      </div>
+      {% endfor %}
+      {% else %}
+      <h2 class="text-center py-5">No results found!</h2>
+      {% endif %}
+      <!-- Divider-->
+      <hr class="my-4" />
+      <!-- Pager-->
+      {% if posts.has_other_pages %}
+      <div class="row mb-4">
+        <div class="col">
+          {% if posts.has_previous %}
+          <a class="btn btn-primary text-uppercase" href="?page={{posts.previous_page_number}}">← Newer</a>
+          {% endif %}
+        </div>
+        <div class="col text-end">
+          {% if posts.has_next %}
+        <a class="btn btn-primary text-uppercase" href="?page={{posts.next_page_number}}">Older →</a>
+        {% endif %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock content %}

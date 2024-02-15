@@ -1,0 +1,44 @@
+{% extends "admin/base_site.html" %}
+{% block title %}Total Blogs by Category</title>
+{% endblock %}
+{% block content %}
+
+<div>
+  <div
+    class="chart-container"
+    style="position: relative; height: 100vh; width: 100%"
+  >
+    <h1>Total Blogs by Category</h1>
+    <canvas id="chart"></canvas>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const ctx = document.getElementById("chart");
+  const labels = {{ labels|safe }};
+  const data = {{ data|safe }};
+
+  new Chart(ctx, {
+    type: "pie",
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: "# of Blogs",
+          data: data,
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+    },
+  });
+</script>
+
+{% endblock %}
